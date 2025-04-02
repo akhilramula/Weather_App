@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Weather App</title>
+    
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    
+    <!-- Custom Styles -->
+    <style>
+		body {
+		    background: url('/images/bg2.webp') no-repeat center center/cover;
+		    height: 100vh;
+		    display: flex;
+		    align-items: center;
+		    justify-content: center;
+		    font-family: 'Poppins', sans-serif;
+		    color: white;
+		}
+
+        
+        .weather-container {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(12px);
+            padding: 35px;
+            border-radius: 20px;
+            box-shadow: 0px 5px 20px rgba(0, 0, 0, 0.3);
+            text-align: center;
+            max-width: 420px;
+            width: 100%;
+            color: black;
+        }
+
+        .form-control {
+            border-radius: 50px;
+            text-align: center;
+            transition: all 0.3s ease-in-out;
+        }
+
+        .form-control:focus {
+            box-shadow: 0px 0px 12px rgba(255, 255, 255, 0.6);
+            transform: scale(1.05);
+        }
+
+        .btn-custom {
+            background: linear-gradient(to right, #007bff, #00c6ff);
+            color: white;
+            border-radius: 50px;
+            width: 100%;
+            font-weight: bold;
+            transition: all 0.3s ease-in-out;
+        }
+
+        .btn-custom:hover {
+            background: linear-gradient(to right, #0056b3, #0046a3);
+            transform: scale(1.05);
+        }
+
+        .weather-card {
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(18px);
+            padding: 25px;
+            border-radius: 20px;
+            box-shadow: 0px 5px 20px rgba(0, 0, 0, 0.3);
+            margin-top: 20px;
+            transition: all 0.3s ease-in-out;
+			color:white;
+        }
+
+        .weather-card:hover {
+            transform: scale(1.05);
+        }
+
+        .weather-icon {
+            font-size: 70px;
+            margin-bottom: 10px;
+            transition: transform 0.3s ease-in-out;
+        }
+
+        .weather-icon:hover {
+            transform: rotate(10deg) scale(1.1);
+        }
+
+        .weather-details p {
+            font-size: 18px;
+            margin: 5px 0;
+            font-weight: 500;
+        }
+
+        /* Weather Icon Colors */
+        .clear { color: #FFD700; } /* Gold for clear sky */
+        .cloudy { color: #B0C4DE; } /* Light steel blue for clouds */
+        .rain { color: #4682B4; } /* Steel blue for rain */
+        .storm { color: #FF4500; } /* Orange-red for thunderstorms */
+        .snow { color: #FFFFFF; } /* White for snow */
+        .mist { color: #C0C0C0; } /* Silver for mist/fog */
+
+    </style>
+
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+</head>
+<body>
+
+    <div class="weather-container">
+        <h2 class="mb-3">🌤 Weather App</h2>
+        
+        <form th:action="@{/getWeather}" method="GET">
+            <div class="mb-3">
+                <input type="text" class="form-control" name="city" placeholder="Enter city name" required>
+            </div>
+            <button type="submit" class="btn btn-custom">
+                <i class="bi bi-cloud-sun"></i> Get Weather
+            </button>
+        </form>
+
+        <!-- Weather Result Card -->
+        <div th:if="${city}" class="weather-card">
+            <!-- Dynamic Icons for Weather Conditions -->
+            <i class="bi bi-brightness-high weather-icon clear" th:if="${response == 'clear sky'}"></i>
+            <i class="bi bi-cloud-sun weather-icon cloudy" th:if="${response == 'few clouds'}"></i>
+            <i class="bi bi-cloud weather-icon cloudy" th:if="${response == 'scattered clouds'}"></i>
+            <i class="bi bi-clouds weather-icon cloudy" th:if="${response == 'broken clouds'}"></i>
+            <i class="bi bi-cloud weather-icon cloudy" th:if="${response == 'overcast clouds'}"></i>
+            <i class="bi bi-cloud-rain weather-icon rain" th:if="${response == 'rain' or response == 'shower rain' or response == 'light rain'}"></i>
+            <i class="bi bi-cloud-lightning weather-icon storm" th:if="${response == 'thunderstorm'}"></i>
+            <i class="bi bi-snow weather-icon snow" th:if="${response == 'snow'}"></i>
+            <i class="bi bi-cloud-fog weather-icon mist" th:if="${response == 'mist' or response == 'fog'}"></i>
+
+            <h4 th:text="${city} + ', ' + ${country}"></h4>
+            <div class="weather-details">
+                <p><strong>🌡 Temperature:</strong> <span th:text="${temperature} + '°C'"></span></p>
+                <p><strong>💧 Humidity:</strong> <span th:text="${humidity} + '%'"></span></p>
+                <p><strong>🌬 Wind Speed:</strong> <span th:text="${windSpeed} + ' m/s'"></span></p>
+                <p><strong>🌤 Condition:</strong> <span th:text="${response}"></span></p>
+            </div>
+        </div>
+
+        <!-- Error Message -->
+        <div th:if="${error}" class="alert alert-danger mt-3">
+            <p th:text="${error}"></p>
+        </div>
+    </div>
+
+</body>
+</html>
