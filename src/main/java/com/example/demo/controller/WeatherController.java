@@ -22,20 +22,25 @@ public class WeatherController {
 
 	@GetMapping("/getWeather")
 	public String getWeather(@RequestParam("city") String city, Model model) {
-		String url = "https://api.openweathermap.org/data/2.5/weather?q=" + city + "&appid=" + apiKey + "&units=metric";
-		RestTemplate restTemplate = new RestTemplate();
-		WeatherResponse weatherResponse = restTemplate.getForObject(url, WeatherResponse.class);
-		
-		if (weatherResponse != null) {
-			model.addAttribute("city", weatherResponse.getName());
-			model.addAttribute("country", weatherResponse.getSys().getCountry());
-			model.addAttribute("temperature", weatherResponse.getMain().getTemp());
-			model.addAttribute("humidity", weatherResponse.getMain().getHumidity());
-			model.addAttribute("windSpeed", weatherResponse.getWind().getSpeed());
-			model.addAttribute("response", weatherResponse.getWeather().get(0).getDescription());
-		} else {
-			model.addAttribute("error", "City Not Found.");
-		}
-		return "index";
+	    String url = "https://api.openweathermap.org/data/2.5/weather?q=" + city + "&appid=" + apiKey + "&units=metric";
+	    RestTemplate restTemplate = new RestTemplate();
+
+	    try {
+	        WeatherResponse weatherResponse = restTemplate.getForObject(url, WeatherResponse.class);
+
+	        if (weatherResponse != null) {
+	            model.addAttribute("city", weatherResponse.getName());
+	            model.addAttribute("country", weatherResponse.getSys().getCountry());
+	            model.addAttribute("temperature", weatherResponse.getMain().getTemp());
+	            model.addAttribute("humidity", weatherResponse.getMain().getHumidity());
+	            model.addAttribute("windSpeed", weatherResponse.getWind().getSpeed());
+	            model.addAttribute("response", weatherResponse.getWeather().get(0).getDescription());
+	        }
+	    } catch (Exception e) {
+	        model.addAttribute("error", "City Not Found. Please enter a valid city name.");
+	    }
+
+	    return "index";
 	}
+
 }
